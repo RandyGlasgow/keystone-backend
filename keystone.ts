@@ -13,7 +13,6 @@ import { lists } from './schema';
 
 // Keystone auth is configured separately - check out the basic auth setup we are importing from our auth file.
 import { withAuth, session } from './auth';
-import { DATABASE_URL } from './config';
 
 import * as dotenv from 'dotenv';
 
@@ -24,7 +23,7 @@ export default withAuth(
     // the db sets the database provider - we're using sqlite for the fastest startup experience
     db: {
       provider: 'postgresql',
-      url: dotenv.config().parsed?.DATABASE_URL || 'NO_DB_HOST_FOUND',
+      url: dotenv.config().parsed?.DATABASE_URL || process.env.DATABASE_URL || 'NO_DB_HOST_FOUND',
       useMigrations: true,
     },
     // image storage
