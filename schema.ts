@@ -11,75 +11,20 @@ import {
   select,
 } from '@keystone-next/keystone/fields';
 
-import {document} from '@keystone-next/fields-document'
-
 export const lists = {
-  
-  User: list({
+ 
+  Person: list({
     fields: {
-      name: text({ validation: { isRequired: true } }),
-      email: text({
-        validation: { isRequired: true },
-        isIndexed: 'unique',
-        isFilterable: true,
-      }),
-      // The password field takes care of hiding details and hashing values
-      password: password({ validation: { isRequired: true } }),
-    },
-    // Here we can configure the Admin UI. We want to show a user's name and email in the Admin UI
-    ui: { 
-      listView: {
-        initialColumns: ['name', 'email'],
-      },
+      name: text({ isRequired: true }),
+      // Added an email and password pair to be used with authentication
+      // The email address is going to be used as the identity field, so it's
+      // important that we set both isRequired and isUnique
+      email: text({ isRequired: true, isUnique: true, isIndexed: 'unique' }),
+      // The password field stores a hash of the supplied password, and
+      // we want to ensure that all people have a password set, so we use
+      // the isRequired flag.
+      password: password({ isRequired: true }),
     },
   }),
-
-  // The project model
-  // Project: list({
-
-  //   // fields
-  //   fields: {
-  //     // the name of the project
-  //     name: text({
-  //       validation:{
-  //         isRequired: true,
-  //       }
-  //     }),
-  //     // slug of the project based on the name
-  //     slug: text({
-  //       // make unique
-  //       isIndexed: true,
-  //       // hooks for slug creation
-  //       hooks: {
-  //         resolveInput: ({ resolvedData }) => {
-  //           return resolvedData.name.toLowerCase().replace(/\s/g, '-');
-  //         },
-  //       },
-  //       ui:{
-  //         // hide from the admin UI
-  //         createView: {
-  //           fieldMode: 'hidden',
-  //         },
-  //       }
-  //     }),
-
-  //     status: select({
-  //       options: [
-  //         { value: 'active', label: 'Active' },
-  //         { value: 'inactive', label: 'Inactive' },
-  //       ],
-  //     }),
-  //     shortDescription: text({
-  //     }),
-  //   },
-
-  //   // ui options for the list view
-  //   ui:{
-  //     listView: {
-  //       initialColumns: ['name', 'status'],
-  //     }
-  //   }
-
-  // })
 
 };

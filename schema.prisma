@@ -12,19 +12,9 @@ generator client {
   engineType = "binary"
 }
 
-model User {
-  id       String @id @default(cuid())
-  name     String @default("")
-  email    String @unique @default("")
-  password String
-}
-
-model Project {
-  id               String  @id @default(cuid())
-  name             String  @default("")
-  slug             String  @default("")
-  status           String?
-  shortDescription String  @default("")
-
-  @@index([slug])
+model Person {
+  id       String  @id @default(cuid())
+  name     String  @default("")
+  email    String  @unique @default("")
+  password String?
 }
