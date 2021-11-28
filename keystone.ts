@@ -12,20 +12,27 @@ import { config } from '@keystone-next/keystone';
 import { lists } from './schema';
 
 // Keystone auth is configured separately - check out the basic auth setup we are importing from our auth file.
-import { withAuth, session } from './auth';
+import { withAuth} from './auth';
+import { statelessSessions } from '@keystone-next/keystone/session';
+import { DATABASE_URL, MAX_SESSION_AGE, PORT, SESSION_SECRET } from './config';
 
-import * as dotenv from 'dotenv';
 
-console.log();
+const session = statelessSessions({
+  maxAge: MAX_SESSION_AGE || 30* 24* 60 * 60, // 30 days
+  secret: SESSION_SECRET || process.env.SESSION_SECRET,
+});
+
 export default withAuth(
   // Using the config function helps typescript guide you to the available options.
   config({
     // the db sets the database provider - we're using sqlite for the fastest startup experience
     db: {
       provider: 'postgresql',
-      url: dotenv.config().parsed?.DATABASE_URL || process.env.DATABASE_URL || 'NO_DB_HOST_FOUND',
+      url: DATABASE_URL || process.env.DATABASE_URL || 3000||'NO_DB_HOST_FOUND',
       useMigrations: true,
     },
+    // server session
+    server: { port: PORT || parseInt(process.env.PORT ||'') || 3000 },
     // image storage
     images:{
       upload:'local',
