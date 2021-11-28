@@ -1,6 +1,6 @@
+# Packages
 node_modules
-.keystone/admin
-keystone.db
-*.log
+
+# Keystone build files
+.keystone
 .env
-.vscode/settings.json

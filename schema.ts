@@ -1,257 +1,45 @@
-/*
-Welcome to the schema! The schema is the heart of Keystone.
+// Code copied (with some modifications) from the Keystone 6 "with-auth" example
+// See.. https://github.com/keystonejs/keystone/tree/master/examples/with-auth
 
-Here we define our 'lists', which will then be used both for the GraphQL
-API definition, our database tables, and our Admin UI layout.
-
-Some quick definitions to help out:
-A list: A definition of a collection of fields with a name. For the starter
-  we have `User`, `Post`, and `Tag` lists.
-A field: The individual bits of data on your list, each with its own type.
-  you can see some of the lists in what we use below.
-
-*/
-
-// Like the `config` function we use in keystone.ts, we use functions
-// for putting in our config so we get useful errors. With typescript,
-// we get these even before code runs.
 import { list } from '@keystone-next/keystone';
-
-// We're using some common fields in the starter. Check out https://keystonejs.com/docs/apis/fields#fields-api
-// for the full list of fields.
 import {
-  text,
-  relationship,
+  checkbox,
   password,
+  relationship,
+  text,
   timestamp,
   select,
-  image,
 } from '@keystone-next/keystone/fields';
 
-// The document field is a more complicated field, so it's in its own package
-// Keystone aims to have all the base field types, but you can make your own
-// custom ones.
-import { document } from '@keystone-next/fields-document';
-
-// We have a users list, a blogs list, and tags for blog posts, so they can be filtered.
-// Each property on the exported object will become the name of a list (a.k.a. the `listKey`),
-// with the value being the definition of the list, including the fields.
 export const lists = {
-  // Here we define the user list.
-  User: list({
-    // Here are the fields that `User` will have. We want an email and password so they can log in
-    // a name so we can refer to them, and a way to connect users to posts.
+  Task: list({
     fields: {
-
-      name: text({ validation: { isRequired: true } }),
-      email: text({
-        validation: { isRequired: true },
-        isIndexed: 'unique',
-        isFilterable: true,
-      }),
-      // The password field takes care of hiding details and hashing values
-      password: password({ validation: { isRequired: true } }),
-      // Relationships allow us to reference other lists. In this case,
-      // we want a user to have many posts, and we are saying that the user
-      // should be referencable by the 'author' field of posts.
-      // Make sure you read the docs to understand how they work: https://keystonejs.com/docs/guides/relationships#understanding-relationships
-      posts: relationship({ ref: 'Post.author', many: true }),
-    },
-    // Here we can configure the Admin UI. We want to show a user's name and posts in the Admin UI
-    ui: {
-      listView: {
-        initialColumns: ['name', 'posts'],
-      },
-    },
-  }),
-
-  // Our model for projects.
-  Project: list({
-
-    
-    fields: {
-      // url slug for the project
-      // slug
-      content: document({
-        formatting: {
-          
-          inlineMarks: {
-
-            code: true,
-          },
-          listTypes: {
-            unordered: true,
-            ordered: true,
-          },
-          
-          headingLevels: [1, 2, 3, 4, 5, 6],
-          
-
-        },
-      }),
-      url: text({
-        isFilterable: true,
-        validation: {
-          isRequired: false,
-        },
-        hooks:{
-          
-          // modify the slug before it is saved to the database
-          resolveInput: (input:{inputData:{name:string}}) => {
-            console.log(input);
-            // destructure the input 
-            const { name } = input.inputData
-
-            // only modify the slug if the name is not empty
-            if (name) {
-
-              // lowercase the name
-              let slug = name.toLowerCase();
-              // remove all non-alphanumeric characters or spaces
-              slug = slug.replace(/[^a-z0-9 ]/g, '');
-              // replace spaces with dashes
-              slug = slug.replace(/\s+/g, '-');
-
-              // returning the cleaned slug representation of the name
-              return slug;
-            }
-          }
-        },
-        // hide the slug from the admin ui
-        ui: {
-          createView:{
-            fieldMode: 'hidden',
-          },
-          itemView:{
-            fieldMode: 'hidden',
-          }
-        }
-      }),
-      // The name of the project
-      name: text({
-        isIndexed: true,
-        validation: {
-          isRequired: true,
-        },
-      }),
-      // The description of the project
-      description: text({
-        validation: {
-          isRequired: false,
-        },
-        ui:{
-          listView:{
-            fieldMode: 'hidden',
-          },
-          createView:{
-            fieldMode: "edit",
-          }
-
-        }
-      }),
-      // link to the project repository
-      link: text({
-        validation: {
-          isRequired: false,
-        },
-      }),
-      // Image for the project thumbnail
-
-      thumbnail: image({
-      }),
-      thumbnailAlt: text({
-        validation: {
-          isRequired: false,
-        },
-      }),
-      // Tags for the project
-      tags: relationship({
-        ref: 'Tag.projects',
-        ui: {
-          displayMode: 'cards',
-          cardFields: ['name'],
-          inlineEdit: { fields: ['name'] },
-          linkToItem: true,
-          inlineConnect: true,
-          inlineCreate: { fields: ['name'] },
-        },
-        many: true,
-      }),
-    },
-  }),
-
-
-  // Our second list is the Posts list. We've got a few more fields here
-  // so we have all the info we need for displaying posts.
-  Post: list({
-    fields: {
-      title: text(),
-      // Having the status here will make it easy for us to choose whether to display
-      // posts on a live site.
-      status: select({
+      label: text({ isRequired: true }),
+      priority: select({
+        dataType: 'enum',
         options: [
-          { label: 'Published', value: 'published' },
-          { label: 'Draft', value: 'draft' },
+          { label: 'Low', value: 'low' },
+          { label: 'Medium', value: 'medium' },
+          { label: 'High', value: 'high' },
         ],
-        // We want to make sure new posts start off as a draft when they are created
-        defaultValue: 'draft',
-        // fields also have the ability to configure their appearance in the Admin UI
-        ui: {
-          displayMode: 'segmented-control',
-        },
       }),
-      // The document field can be used for making highly editable content. Check out our
-      // guide on the document field https://keystonejs.com/docs/guides/document-fields#how-to-use-document-fields
-      // for more information
-      content: document({
-        formatting: true,
-        layouts: [
-          [1, 1],
-          [1, 1, 1],
-          [2, 1],
-          [1, 2],
-          [1, 2, 1],
-        ],
-        links: true,
-        dividers: true,
-      }),
-      publishDate: timestamp(),
-      // Here is the link from post => author.
-      // We've configured its UI display quite a lot to make the experience of editing posts better.
-      author: relationship({
-        ref: 'User.posts',
-        ui: {
-          displayMode: 'cards',
-          cardFields: ['name', 'email'],
-          inlineEdit: { fields: ['name', 'email'] },
-          linkToItem: true,
-          inlineCreate: { fields: ['name', 'email'] },
-        },
-      }),
-      // We also link posts to tags. This is a many <=> many linking.
-      tags: relationship({
-        ref: 'Tag.posts',
-        ui: {
-          displayMode: 'cards',
-          cardFields: ['name'],
-          inlineEdit: { fields: ['name'] },
-          linkToItem: true,
-          inlineConnect: true,
-          inlineCreate: { fields: ['name'] },
-        },
-        many: true,
-      }),
+      isComplete: checkbox(),
+      assignedTo: relationship({ ref: 'Person.tasks', many: false }),
+      finishBy: timestamp(),
     },
   }),
-  // Our final list is the tag list. This field is just a name and a relationship to posts
-  Tag: list({
-    ui: {
-      isHidden: true,
-    },
+  Person: list({
     fields: {
-      name: text(),
-      posts: relationship({ ref: 'Post.tags', many: true }),
-      projects: relationship({ ref: 'Project.tags', many: true }),
+      name: text({ isRequired: true }),
+      // Added an email and password pair to be used with authentication
+      // The email address is going to be used as the identity field, so it's
+      // important that we set both isRequired and isUnique
+      email: text({ isRequired: true, isUnique: true, isIndexed: 'unique' }),
+      // The password field stores a hash of the supplied password, and
+      // we want to ensure that all people have a password set, so we use
+      // the isRequired flag.
+      password: password({ isRequired: true }),
+      tasks: relationship({ ref: 'Task.assignedTo', many: true }),
     },
   }),
 };

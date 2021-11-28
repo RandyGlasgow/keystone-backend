@@ -1,52 +1,51 @@
-/*
-Welcome to Keystone! This file is what keystone uses to start the app.
-
-It looks at the default export, and expects a Keystone config object.
-
-You can find all the config options in our docs here: https://keystonejs.com/docs/apis/config
-*/
+// Code copied (with some modifications) from the Keystone 6 "with-auth" example
+// See.. https://github.com/keystonejs/keystone/tree/master/examples/with-auth
 
 import { config } from '@keystone-next/keystone';
-
-// Look in the schema file for how we define our lists, and how users interact with them through graphql or the Admin UI
-import { lists } from './schema';
-
-// Keystone auth is configured separately - check out the basic auth setup we are importing from our auth file.
-import { withAuth} from './auth';
 import { statelessSessions } from '@keystone-next/keystone/session';
-import { DATABASE_URL, MAX_SESSION_AGE, PORT, SESSION_SECRET } from './config';
+import { createAuth } from '@keystone-next/auth';
+import { lists } from './schema';
+import { PORT, DATABASE_URL, SESSION_MAX_AGE, SESSION_SECRET } from './config';
 
-
-const session = statelessSessions({
-  maxAge: MAX_SESSION_AGE || 30* 24* 60 * 60, // 30 days
-  secret: SESSION_SECRET || process.env.SESSION_SECRET,
+// createAuth configures signin functionality based on the config below. Note this only implements
+// authentication, i.e signing in as an item using identity and secret fields in a list. Session
+// management and access control are controlled independently in the main keystone config.
+const { withAuth } = createAuth({
+  // This is the list that contains items people can sign in as
+  listKey: 'Person',
+  // The identity field is typically a username or email address
+  identityField: 'email',
+  // The secret field must be a password type field
+  secretField: 'password',
+  // initFirstItem turns on the "First User" experience, which prompts you to create a new user
+  // when there are no items in the list yet
+  initFirstItem: {
+    // These fields are collected in the "Create First User" form
+    fields: ['name', 'email', 'password'],
+  },
 });
 
+// Stateless sessions will store the listKey and itemId of the signed-in user in a cookie.
+// This session object will be made available on the context object used in hooks, access-control,
+// resolvers, etc.
+const session = statelessSessions({
+  maxAge: SESSION_MAX_AGE,
+  // The session secret is used to encrypt cookie data (should be an environment variable)
+  secret: SESSION_SECRET,
+});
+
+// We wrap our config using the withAuth function. This will inject all
+// the extra config required to add support for authentication in our system.
 export default withAuth(
-  // Using the config function helps typescript guide you to the available options.
   config({
-    // the db sets the database provider - we're using sqlite for the fastest startup experience
     db: {
       provider: 'postgresql',
-      url: DATABASE_URL || process.env.DATABASE_URL || 3000||'NO_DB_HOST_FOUND',
       useMigrations: true,
+      url: DATABASE_URL,
     },
-    // server session
-    server: { port: PORT || parseInt(process.env.PORT ||'') || 3000 },
-    // image storage
-    images:{
-      upload:'local',
-      local:{
-        storagePath:'public/uploads',
-        baseUrl:'/images',
-      }
-    },
-    // This config allows us to set up features of the Admin UI https://keystonejs.com/docs/apis/config#ui
-    ui: {
-      // For our starter, we check that someone has session data before letting them see the Admin UI.
-      isAccessAllowed: (context) => !!context.session?.data,
-    },
+    server: { port: PORT },
     lists,
+    // We add our session configuration to the system here.
     session,
   })
 );
