@@ -11,6 +11,8 @@ import {
   select,
 } from '@keystone-next/keystone/fields';
 
+import { document } from '@keystone-next/fields-document';
+
 export const lists = {
  
   Person: list({
@@ -27,4 +29,68 @@ export const lists = {
     },
   }),
 
+  // model for the tags
+  Tag: list({
+    ui: {
+      isHidden: true,
+    },
+    fields: {
+      name: text({ isRequired: true }),
+      projects: relationship({ ref: 'Project.tags', many: true }),
+    },
+  }),
+
+  // model for the project
+  Project: list({
+    fields: {
+      name: text({ isRequired: true, isUnique: true }),
+      status: select({
+        options: [
+          { value: 'active', label: 'Active' },
+          { value: 'inactive', label: 'Inactive' },
+        ],
+        defaultValue: 'inactive',
+      }),
+      tags: relationship({ ref: 'Tag.projects', many: true }),
+      shortDescription: text(),
+      content: document({
+        formatting: {
+          inlineMarks: {
+            code: true,
+          },
+          listTypes: {
+            unordered: true,
+            ordered: true,
+          },
+
+          headingLevels: [1, 2, 3, 4, 5, 6],
+        },
+      }), 
+      // optional repository url
+      repository: text(),
+
+      // optional link to the project
+      link: text(),
+
+      // image url
+      image:text(),
+      slug: text({
+        hooks:{
+          // create a slug from the name field
+          resolveInput: ({ inputData:{name} }) => {
+            if (name) {
+              return name.toLowerCase().replace(/\s+/g, '-');
+            }
+          }
+        },
+        ui: {
+          // don't show the slug field in the admin UI
+          createView: {
+            fieldMode: 'hidden',
+          }
+        }
+      }),
+    },
+    
+  }),
 };
