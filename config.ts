@@ -2,7 +2,7 @@
 const config = require('dotenv').config();
 
 // 
-export const PORT = parseInt(config.parsed.PORT);
+export const PORT = parseInt(config.parsed.PORT || '');
 
 // database url
 export const DATABASE_URL = config.parsed.DATABASE_URL;
