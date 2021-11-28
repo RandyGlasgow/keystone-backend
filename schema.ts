@@ -35,51 +35,51 @@ export const lists = {
   }),
 
   // The project model
-  Project: list({
+  // Project: list({
 
-    // fields
-    fields: {
-      // the name of the project
-      name: text({
-        validation:{
-          isRequired: true,
-        }
-      }),
-      // slug of the project based on the name
-      slug: text({
-        // make unique
-        isIndexed: true,
-        // hooks for slug creation
-        hooks: {
-          resolveInput: ({ resolvedData }) => {
-            return resolvedData.name.toLowerCase().replace(/\s/g, '-');
-          },
-        },
-        ui:{
-          // hide from the admin UI
-          createView: {
-            fieldMode: 'hidden',
-          },
-        }
-      }),
+  //   // fields
+  //   fields: {
+  //     // the name of the project
+  //     name: text({
+  //       validation:{
+  //         isRequired: true,
+  //       }
+  //     }),
+  //     // slug of the project based on the name
+  //     slug: text({
+  //       // make unique
+  //       isIndexed: true,
+  //       // hooks for slug creation
+  //       hooks: {
+  //         resolveInput: ({ resolvedData }) => {
+  //           return resolvedData.name.toLowerCase().replace(/\s/g, '-');
+  //         },
+  //       },
+  //       ui:{
+  //         // hide from the admin UI
+  //         createView: {
+  //           fieldMode: 'hidden',
+  //         },
+  //       }
+  //     }),
 
-      status: select({
-        options: [
-          { value: 'active', label: 'Active' },
-          { value: 'inactive', label: 'Inactive' },
-        ],
-      }),
-      shortDescription: text({
-      }),
-    },
+  //     status: select({
+  //       options: [
+  //         { value: 'active', label: 'Active' },
+  //         { value: 'inactive', label: 'Inactive' },
+  //       ],
+  //     }),
+  //     shortDescription: text({
+  //     }),
+  //   },
 
-    // ui options for the list view
-    ui:{
-      listView: {
-        initialColumns: ['name', 'status'],
-      }
-    }
+  //   // ui options for the list view
+  //   ui:{
+  //     listView: {
+  //       initialColumns: ['name', 'status'],
+  //     }
+  //   }
 
-  })
+  // })
 
 };
