@@ -3,5 +3,3 @@ node_modules
 
 # Keystone build files
 .keystone
-.env
-migrations/**
