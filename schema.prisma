@@ -32,6 +32,7 @@ model Project {
   tags             Tag[]   @relation("Project_tags_Tag_projects")
   shortDescription String  @default("")
   content          Json    @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  repository       String  @default("")
   image            String  @default("")
   slug             String  @default("")
 }

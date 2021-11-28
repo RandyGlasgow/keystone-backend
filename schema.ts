@@ -66,6 +66,9 @@ export const lists = {
           headingLevels: [1, 2, 3, 4, 5, 6],
         },
       }), 
+      // optional repository url
+      repository: text(),
+
       // image url
       image:text(),
       slug: text({

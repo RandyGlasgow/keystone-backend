@@ -180,6 +180,7 @@ type Project {
   tagsCount(where: TagWhereInput! = {}): Int
   shortDescription: String
   content: Project_content_Document
+  repository: String
   image: String
   slug: String
 }
@@ -201,6 +202,7 @@ input ProjectWhereInput {
   status: StringNullableFilter
   tags: TagManyRelationFilter
   shortDescription: StringFilter
+  repository: StringFilter
   image: StringFilter
   slug: StringFilter
 }
@@ -245,6 +247,7 @@ input ProjectOrderByInput {
   name: OrderDirection
   status: OrderDirection
   shortDescription: OrderDirection
+  repository: OrderDirection
   image: OrderDirection
   slug: OrderDirection
 }
@@ -255,6 +258,7 @@ input ProjectUpdateInput {
   tags: TagRelateToManyForUpdateInput
   shortDescription: String
   content: JSON
+  repository: String
   image: String
   slug: String
 }
@@ -277,6 +281,7 @@ input ProjectCreateInput {
   tags: TagRelateToManyForCreateInput
   shortDescription: String
   content: JSON
+  repository: String
   image: String
   slug: String
 }
