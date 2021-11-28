@@ -51,8 +51,10 @@ export const lists = {
       slug: text({
         hooks:{
           // create a slug from the name field
-          resolveInput: ({ item }) => {
-            return item.name.toLowerCase().replace(/\s+/g, '-');
+          resolveInput: ({ inputData:{name} }) => {
+            if (name) {
+              return name.toLowerCase().replace(/\s+/g, '-');
+            }
           }
         },
         ui: {
