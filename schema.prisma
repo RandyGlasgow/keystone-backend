@@ -18,3 +18,12 @@ model Person {
   email    String  @unique @default("")
   password String?
 }
+
+model Project {
+  id               String @id @default(cuid())
+  name             String @default("")
+  shortDescription String @default("")
+  content          Json   @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  image            String @default("")
+  slug             String @default("")
+}

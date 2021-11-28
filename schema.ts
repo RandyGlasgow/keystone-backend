@@ -11,6 +11,8 @@ import {
   select,
 } from '@keystone-next/keystone/fields';
 
+import { document } from '@keystone-next/fields-document';
+
 export const lists = {
  
   Person: list({
@@ -25,5 +27,42 @@ export const lists = {
       // the isRequired flag.
       password: password({ isRequired: true }),
     },
+  }),
+
+  Project: list({
+    fields: {
+      name: text({ isRequired: true, isUnique: true }),
+      shortDescription: text(),
+      content: document({
+        formatting: {
+          inlineMarks: {
+            code: true,
+          },
+          listTypes: {
+            unordered: true,
+            ordered: true,
+          },
+
+          headingLevels: [1, 2, 3, 4, 5, 6],
+        },
+      }), 
+      // image url
+      image:text(),
+      slug: text({
+        hooks:{
+          // create a slug from the name field
+          resolveInput: ({ item }) => {
+            return item.name.toLowerCase().replace(/\s+/g, '-');
+          }
+        },
+        ui: {
+          // don't show the slug field in the admin UI
+          createView: {
+            fieldMode: 'hidden',
+          }
+        }
+      }),
+    },
+    
   }),
 };
