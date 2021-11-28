@@ -1,4 +1,6 @@
-require('dotenv').config()
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 // 3000 is standard for node apps
 // Once deployed, Heroku will supply this var to your app
