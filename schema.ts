@@ -26,4 +26,5 @@ export const lists = {
       password: password({ isRequired: true }),
     },
   }),
+
 };
