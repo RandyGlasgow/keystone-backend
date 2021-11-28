@@ -29,9 +29,29 @@ export const lists = {
     },
   }),
 
+  // model for the tags
+  Tag: list({
+    ui: {
+      isHidden: true,
+    },
+    fields: {
+      name: text({ isRequired: true }),
+      projects: relationship({ ref: 'Project.tags', many: true }),
+    },
+  }),
+
+  // model for the project
   Project: list({
     fields: {
       name: text({ isRequired: true, isUnique: true }),
+      status: select({
+        options: [
+          { value: 'active', label: 'Active' },
+          { value: 'inactive', label: 'Inactive' },
+        ],
+        defaultValue: 'inactive',
+      }),
+      tags: relationship({ ref: 'Tag.projects', many: true }),
       shortDescription: text(),
       content: document({
         formatting: {

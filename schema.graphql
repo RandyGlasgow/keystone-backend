@@ -104,9 +104,80 @@ input PersonCreateInput {
   password: String
 }
 
+type Tag {
+  id: ID!
+  name: String
+  projects(
+    where: ProjectWhereInput! = {}
+    orderBy: [ProjectOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Project!]
+  projectsCount(where: ProjectWhereInput! = {}): Int
+}
+
+input TagWhereUniqueInput {
+  id: ID
+}
+
+input TagWhereInput {
+  AND: [TagWhereInput!]
+  OR: [TagWhereInput!]
+  NOT: [TagWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  projects: ProjectManyRelationFilter
+}
+
+input ProjectManyRelationFilter {
+  every: ProjectWhereInput
+  some: ProjectWhereInput
+  none: ProjectWhereInput
+}
+
+input TagOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+}
+
+input TagUpdateInput {
+  name: String
+  projects: ProjectRelateToManyForUpdateInput
+}
+
+input ProjectRelateToManyForUpdateInput {
+  disconnect: [ProjectWhereUniqueInput!]
+  set: [ProjectWhereUniqueInput!]
+  create: [ProjectCreateInput!]
+  connect: [ProjectWhereUniqueInput!]
+}
+
+input TagUpdateArgs {
+  where: TagWhereUniqueInput!
+  data: TagUpdateInput!
+}
+
+input TagCreateInput {
+  name: String
+  projects: ProjectRelateToManyForCreateInput
+}
+
+input ProjectRelateToManyForCreateInput {
+  create: [ProjectCreateInput!]
+  connect: [ProjectWhereUniqueInput!]
+}
+
 type Project {
   id: ID!
   name: String
+  status: String
+  tags(
+    where: TagWhereInput! = {}
+    orderBy: [TagOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Tag!]
+  tagsCount(where: TagWhereInput! = {}): Int
   shortDescription: String
   content: Project_content_Document
   image: String
@@ -127,14 +198,52 @@ input ProjectWhereInput {
   NOT: [ProjectWhereInput!]
   id: IDFilter
   name: StringFilter
+  status: StringNullableFilter
+  tags: TagManyRelationFilter
   shortDescription: StringFilter
   image: StringFilter
   slug: StringFilter
 }
 
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  mode: QueryMode
+  not: NestedStringNullableFilter
+}
+
+input NestedStringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
+}
+
+input TagManyRelationFilter {
+  every: TagWhereInput
+  some: TagWhereInput
+  none: TagWhereInput
+}
+
 input ProjectOrderByInput {
   id: OrderDirection
   name: OrderDirection
+  status: OrderDirection
   shortDescription: OrderDirection
   image: OrderDirection
   slug: OrderDirection
@@ -142,10 +251,19 @@ input ProjectOrderByInput {
 
 input ProjectUpdateInput {
   name: String
+  status: String
+  tags: TagRelateToManyForUpdateInput
   shortDescription: String
   content: JSON
   image: String
   slug: String
+}
+
+input TagRelateToManyForUpdateInput {
+  disconnect: [TagWhereUniqueInput!]
+  set: [TagWhereUniqueInput!]
+  create: [TagCreateInput!]
+  connect: [TagWhereUniqueInput!]
 }
 
 input ProjectUpdateArgs {
@@ -155,10 +273,17 @@ input ProjectUpdateArgs {
 
 input ProjectCreateInput {
   name: String
+  status: String
+  tags: TagRelateToManyForCreateInput
   shortDescription: String
   content: JSON
   image: String
   slug: String
+}
+
+input TagRelateToManyForCreateInput {
+  create: [TagCreateInput!]
+  connect: [TagWhereUniqueInput!]
 }
 
 """
@@ -176,6 +301,12 @@ type Mutation {
   updatePeople(data: [PersonUpdateArgs!]!): [Person]
   deletePerson(where: PersonWhereUniqueInput!): Person
   deletePeople(where: [PersonWhereUniqueInput!]!): [Person]
+  createTag(data: TagCreateInput!): Tag
+  createTags(data: [TagCreateInput!]!): [Tag]
+  updateTag(where: TagWhereUniqueInput!, data: TagUpdateInput!): Tag
+  updateTags(data: [TagUpdateArgs!]!): [Tag]
+  deleteTag(where: TagWhereUniqueInput!): Tag
+  deleteTags(where: [TagWhereUniqueInput!]!): [Tag]
   createProject(data: ProjectCreateInput!): Project
   createProjects(data: [ProjectCreateInput!]!): [Project]
   updateProject(
@@ -223,6 +354,14 @@ type Query {
   ): [Person!]
   person(where: PersonWhereUniqueInput!): Person
   peopleCount(where: PersonWhereInput! = {}): Int
+  tags(
+    where: TagWhereInput! = {}
+    orderBy: [TagOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Tag!]
+  tag(where: TagWhereUniqueInput!): Tag
+  tagsCount(where: TagWhereInput! = {}): Int
   projects(
     where: ProjectWhereInput! = {}
     orderBy: [ProjectOrderByInput!]! = []

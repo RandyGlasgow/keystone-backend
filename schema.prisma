@@ -19,11 +19,19 @@ model Person {
   password String?
 }
 
+model Tag {
+  id       String    @id @default(cuid())
+  name     String    @default("")
+  projects Project[] @relation("Project_tags_Tag_projects")
+}
+
 model Project {
-  id               String @id @default(cuid())
-  name             String @default("")
-  shortDescription String @default("")
-  content          Json   @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
-  image            String @default("")
-  slug             String @default("")
+  id               String  @id @default(cuid())
+  name             String  @default("")
+  status           String? @default("inactive")
+  tags             Tag[]   @relation("Project_tags_Tag_projects")
+  shortDescription String  @default("")
+  content          Json    @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  image            String  @default("")
+  slug             String  @default("")
 }
