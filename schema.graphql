@@ -181,6 +181,7 @@ type Project {
   shortDescription: String
   content: Project_content_Document
   repository: String
+  link: String
   image: String
   slug: String
 }
@@ -203,6 +204,7 @@ input ProjectWhereInput {
   tags: TagManyRelationFilter
   shortDescription: StringFilter
   repository: StringFilter
+  link: StringFilter
   image: StringFilter
   slug: StringFilter
 }
@@ -248,6 +250,7 @@ input ProjectOrderByInput {
   status: OrderDirection
   shortDescription: OrderDirection
   repository: OrderDirection
+  link: OrderDirection
   image: OrderDirection
   slug: OrderDirection
 }
@@ -259,6 +262,7 @@ input ProjectUpdateInput {
   shortDescription: String
   content: JSON
   repository: String
+  link: String
   image: String
   slug: String
 }
@@ -282,6 +286,7 @@ input ProjectCreateInput {
   shortDescription: String
   content: JSON
   repository: String
+  link: String
   image: String
   slug: String
 }

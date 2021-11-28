@@ -33,6 +33,7 @@ model Project {
   shortDescription String  @default("")
   content          Json    @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
   repository       String  @default("")
+  link             String  @default("")
   image            String  @default("")
   slug             String  @default("")
 }

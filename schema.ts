@@ -69,6 +69,9 @@ export const lists = {
       // optional repository url
       repository: text(),
 
+      // optional link to the project
+      link: text(),
+
       // image url
       image:text(),
       slug: text({
